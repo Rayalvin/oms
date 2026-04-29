@@ -2,18 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { navModules } from "@/lib/oms-data";
 import {
-  LayoutDashboard,
+  Bot,
   Building2,
+  ChevronRight,
+  Clock,
   DollarSign,
   GitBranch,
+  LayoutDashboard,
+  Menu,
+  Sparkles,
+  User,
+  X,
   BarChart3,
-  Clock,
-  ChevronDown,
-  ChevronRight,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -25,153 +29,113 @@ const iconMap: Record<string, React.ElementType> = {
   Clock,
 };
 
-// OM+ active highlight per spec — soft indigo bg, indigo bold text
-const ACTIVE_BG = "#EEF2FF";
-const ACTIVE_FG = "#4F46E5";
+const ACTIVE_BG = "#2563EB";
+const ACTIVE_FG = "#FFFFFF";
 const HOVER_BG = "#F1F5F9";
 
 export function Sidebar() {
   const pathname = usePathname();
-
-  const initialExpanded = (() => {
-    const out: Record<string, boolean> = {};
-    for (const m of navModules) {
-      if (!m.submodules) continue;
-      out[m.id] = m.submodules.some((s) => pathname === s.path || pathname.startsWith(s.path + "/"));
+  const router = useRouter();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [openModules, setOpenModules] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    for (const module of navModules) {
+      if (!module.submodules?.length) continue;
+      initial[module.id] = module.submodules.some((sub) => pathname === sub.path || pathname.startsWith(sub.path + "/"));
     }
-    return out;
-  })();
-  const [expanded, setExpanded] = useState<Record<string, boolean>>(initialExpanded);
+    return initial;
+  });
 
-  const toggleModule = (id: string) =>
-    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-
-  const isExactActive = (path: string) => pathname === path;
   const isPrefixActive = (path: string) =>
     path === "/" ? pathname === "/" : pathname === path || pathname.startsWith(path + "/");
 
   return (
     <aside
-      className="fixed inset-y-0 left-0 w-60 flex flex-col z-30 overflow-hidden border-r"
-      style={{ background: "#FFFFFF", borderColor: "#E5E7EB" }}
+      className={cn(
+        "fixed inset-y-0 left-0 z-30 flex flex-col overflow-hidden border-r bg-white transition-[width] duration-300",
+        isExpanded ? "w-[220px]" : "w-[72px]"
+      )}
+      style={{ borderColor: "#E2E8F0" }}
     >
-      {/* Logo — "OM+" wordmark, dark text on white */}
-      <div
-        className="flex items-center gap-3 px-5 py-5 border-b"
-        style={{ borderColor: "#E5E7EB" }}
-      >
-        <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "#4F46E5" }}
-        >
-          <span className="text-white text-base font-bold leading-none">+</span>
+      <div className={cn("flex items-center border-b px-3 py-4", isExpanded ? "justify-between" : "justify-center")} style={{ borderColor: "#E2E8F0" }}>
+        <div className="h-10 w-10 rounded-2xl bg-[#F1F5F9] flex items-center justify-center">
+          <Sparkles className="h-5 w-5 text-[#2563EB]" />
         </div>
-        <div>
-          <p
-            className="text-[20px] font-bold leading-none tracking-tight"
-            style={{ color: "#0F172A" }}
-          >
-            OM+
-          </p>
-          <p className="text-[11px] mt-1" style={{ color: "#94A3B8" }}>
-            Organization Management
-          </p>
-        </div>
+        {isExpanded && <span className="text-sm font-semibold text-[#0F172A]">Talent Suite</span>}
+        <button onClick={() => setIsExpanded((v) => !v)} className="rounded-xl p-2 hover:bg-[#F1F5F9]">
+          {isExpanded ? <X className="h-4 w-4 text-[#64748B]" /> : <Menu className="h-4 w-4 text-[#64748B]" />}
+        </button>
       </div>
 
-      {/* Nav — strict 6 modules; dashboard is direct, others accordion */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2">
+      <nav className="flex-1 overflow-y-auto py-4 px-2">
         {navModules.map((module) => {
           const Icon = iconMap[module.icon] || LayoutDashboard;
-          const hasSub = !!module.submodules && module.submodules.length > 0;
-          const isOpen = expanded[module.id];
-          const directActive = !hasSub && module.path ? isPrefixActive(module.path) : false;
-          const accordionActive = hasSub
-            ? module.submodules!.some((s) => isPrefixActive(s.path))
-            : false;
-          const moduleActive = directActive || accordionActive;
-
-          // Module header — light theme: slate text default, indigo active
+          const hasSubmodules = !!module.submodules?.length;
+          const modulePath = module.path ?? module.submodules?.[0]?.path ?? "/";
+          const moduleActive = hasSubmodules
+            ? module.submodules!.some((sub) => isPrefixActive(sub.path))
+            : isPrefixActive(modulePath);
+          const isOpen = openModules[module.id] ?? false;
           const headerClasses = cn(
-            "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors text-sm",
-            moduleActive ? "font-semibold" : "font-medium",
+            "w-full flex items-center rounded-2xl transition-all duration-200",
+            isExpanded ? "h-11 gap-3 px-3" : "h-11 justify-center",
           );
-          const headerStyle: React.CSSProperties = directActive
-            ? { background: ACTIVE_BG, color: ACTIVE_FG }
-            : moduleActive
-              ? { color: "#0F172A" }
-              : { color: "#475569" };
+          const headerStyle: React.CSSProperties = moduleActive
+            ? { background: ACTIVE_BG, color: ACTIVE_FG, boxShadow: "0 8px 18px rgba(37,99,235,0.22)" }
+            : { color: "#64748B" };
 
           return (
-            <div key={module.id} className="mb-0.5">
-              {hasSub ? (
-                <button
-                  onClick={() => toggleModule(module.id)}
-                  className={headerClasses}
-                  style={headerStyle}
-                  onMouseEnter={(e) => {
-                    if (!directActive)
-                      (e.currentTarget as HTMLElement).style.background = HOVER_BG;
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!directActive)
-                      (e.currentTarget as HTMLElement).style.background = "";
-                  }}
-                  aria-expanded={isOpen}
-                >
-                  <Icon className="w-4 h-4 flex-shrink-0" />
-                  <span className="flex-1 text-sm">{module.label}</span>
-                  {isOpen ? (
-                    <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-                  ) : (
-                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                  )}
-                </button>
-              ) : (
-                <Link
-                  href={module.path || "/"}
-                  className={headerClasses}
-                  style={headerStyle}
-                  onMouseEnter={(e) => {
-                    if (!directActive)
-                      (e.currentTarget as HTMLElement).style.background = HOVER_BG;
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!directActive)
-                      (e.currentTarget as HTMLElement).style.background = "";
-                  }}
-                >
-                  <Icon className="w-4 h-4 flex-shrink-0" />
-                  <span className="flex-1 text-sm">{module.label}</span>
-                </Link>
-              )}
-
-              {/* Submodules — white dropdown, indented hierarchy, no card nesting */}
-              {hasSub && isOpen && (
-                <div className="ml-7 mt-0.5 mb-1 flex flex-col gap-0.5">
+            <div key={module.id} className="mb-2">
+              <button
+                type="button"
+                className={headerClasses}
+                style={headerStyle}
+                onClick={() => {
+                  if (hasSubmodules && isExpanded) {
+                    setOpenModules((prev) => ({ ...prev, [module.id]: !isOpen }));
+                    return;
+                  }
+                  router.push(modulePath);
+                }}
+                onMouseEnter={(e) => {
+                  if (!moduleActive) (e.currentTarget as HTMLElement).style.background = HOVER_BG;
+                }}
+                onMouseLeave={(e) => {
+                  if (!moduleActive) (e.currentTarget as HTMLElement).style.background = "";
+                }}
+              >
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                {isExpanded && (
+                  <>
+                    <span className="flex-1 truncate text-sm font-medium">{module.label}</span>
+                    {!!module.submodules?.length && (
+                      <ChevronRight className={cn("h-3.5 w-3.5 opacity-60 transition-transform", isOpen && "rotate-90")} />
+                    )}
+                  </>
+                )}
+              </button>
+              {isExpanded && hasSubmodules && isOpen && (
+                <div className="mt-1 ml-3 space-y-1 pl-4">
                   {module.submodules!.map((sub) => {
-                    const active =
-                      isExactActive(sub.path) || pathname.startsWith(sub.path + "/");
+                    const activeSub = isPrefixActive(sub.path);
                     return (
                       <Link
                         key={sub.path}
                         href={sub.path}
                         className={cn(
-                          "block px-3 py-1.5 rounded-lg text-[13px] transition-colors",
-                          active ? "font-semibold" : "font-normal",
+                          "flex h-9 items-center rounded-xl px-3 text-sm transition-colors",
+                          activeSub ? "font-semibold" : "font-medium"
                         )}
                         style={
-                          active
-                            ? { color: ACTIVE_FG, background: ACTIVE_BG }
+                          activeSub
+                            ? { background: "#EFF6FF", color: "#2563EB" }
                             : { color: "#64748B" }
                         }
                         onMouseEnter={(e) => {
-                          if (!active)
-                            (e.currentTarget as HTMLElement).style.background = HOVER_BG;
+                          if (!activeSub) (e.currentTarget as HTMLElement).style.background = HOVER_BG;
                         }}
                         onMouseLeave={(e) => {
-                          if (!active)
-                            (e.currentTarget as HTMLElement).style.background = "";
+                          if (!activeSub) (e.currentTarget as HTMLElement).style.background = "";
                         }}
                       >
                         {sub.label}
@@ -185,27 +149,20 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer — slate text on white */}
-      <div className="px-4 py-4 border-t" style={{ borderColor: "#E5E7EB" }}>
-        <div className="flex items-center gap-3">
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-            style={{ background: "#4F46E5" }}
-          >
-            JD
+      <div className="border-t px-2 py-3 space-y-2" style={{ borderColor: "#E2E8F0" }}>
+        <button className={cn("w-full h-10 rounded-2xl flex items-center transition-colors hover:bg-[#F1F5F9]", isExpanded ? "px-3 gap-3" : "justify-center")}>
+          <div className="h-8 w-8 rounded-full bg-[#F1F5F9] flex items-center justify-center">
+            <User className="h-4 w-4 text-[#64748B]" />
           </div>
-          <div className="min-w-0">
-            <p
-              className="text-xs font-semibold truncate"
-              style={{ color: "#0F172A" }}
-            >
-              John Doe
-            </p>
-            <p className="text-[11px] truncate" style={{ color: "#94A3B8" }}>
-              Finance Director
-            </p>
-          </div>
-        </div>
+          {isExpanded && <span className="text-sm text-[#64748B]">Profile</span>}
+        </button>
+        <button
+          className={cn("w-full h-10 rounded-2xl flex items-center text-white shadow-sm transition-opacity hover:opacity-95", isExpanded ? "px-3 gap-3 justify-start" : "justify-center")}
+          style={{ background: "#2563EB" }}
+        >
+          <Bot className="h-4 w-4" />
+          {isExpanded && <span className="text-sm font-medium">AI Assistant</span>}
+        </button>
       </div>
     </aside>
   );

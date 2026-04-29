@@ -18,20 +18,6 @@ import { criticalAlerts } from "@/lib/oms-data";
 import { cn } from "@/lib/utils";
 import { Filter, RefreshCw, Download, AlertTriangle, CheckCircle2, Clock, Info, Eye } from "lucide-react";
 
-const severityColors: Record<string, { bg: string; text: string; border: string }> = {
-  Critical: { bg: "#FEF2F2", text: "#DC2626", border: "#FECACA" },
-  High: { bg: "#FEF9EC", text: "#D97706", border: "#FDE68A" },
-  Medium: { bg: "#EFF6FF", text: "#2563EB", border: "#BFDBFE" },
-  Low: { bg: "#F0FDF4", text: "#16A34A", border: "#BBF7D0" },
-};
-
-const statusColors: Record<string, string> = {
-  Open: "#DC2626",
-  "In Progress": "#D97706",
-  Resolved: "#16A34A",
-  Pending: "#6B7A99",
-};
-
 export default function DashboardPage() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState("All");
@@ -57,7 +43,6 @@ export default function DashboardPage() {
       />
 
       <main className="p-6 space-y-6">
-        {/* Filter Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-muted-foreground">Period:</span>
@@ -89,7 +74,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* KPI Strip */}
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-foreground">Key Performance Indicators</h2>
@@ -104,10 +88,8 @@ export default function DashboardPage() {
           <KpiStrip />
         </section>
 
-        {/* Main content + Right panel */}
         <div className="grid grid-cols-[1fr_300px] gap-6">
           <div className="min-w-0 space-y-6">
-            {/* Widgets 2×3 */}
             <section>
               <h2 className="text-sm font-semibold text-foreground mb-3">Widget Dashboard</h2>
               <div className="grid grid-cols-2 gap-4">
@@ -120,7 +102,6 @@ export default function DashboardPage() {
               </div>
             </section>
 
-            {/* Critical Alerts Table */}
             <section>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -162,7 +143,13 @@ export default function DashboardPage() {
                   </thead>
                   <tbody>
                     {filteredAlerts.map((alert, i) => {
-                      const sc = severityColors[alert.severity] || severityColors.Low;
+                      const sc = alert.severity === "Critical"
+                        ? { bg: "#FEF2F2", text: "#DC2626" }
+                        : alert.severity === "High"
+                        ? { bg: "#FEF9EC", text: "#D97706" }
+                        : alert.severity === "Medium"
+                        ? { bg: "#EFF6FF", text: "#2563EB" }
+                        : { bg: "#F0FDF4", text: "#16A34A" };
                       return (
                         <tr
                           key={alert.id}
@@ -197,7 +184,19 @@ export default function DashboardPage() {
                           </td>
                           <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{alert.time}</td>
                           <td className="px-4 py-3">
-                            <span className="text-xs font-medium" style={{ color: statusColors[alert.status] || "#6B7A99" }}>
+                            <span
+                              className="text-xs font-medium"
+                              style={{
+                                color:
+                                  alert.status === "Open"
+                                    ? "#DC2626"
+                                    : alert.status === "In Progress"
+                                    ? "#D97706"
+                                    : alert.status === "Resolved"
+                                    ? "#16A34A"
+                                    : "#6B7A99",
+                              }}
+                            >
                               {alert.status}
                             </span>
                           </td>
@@ -218,7 +217,6 @@ export default function DashboardPage() {
             </section>
           </div>
 
-          {/* Right Panel */}
           <aside>
             <RightPanel />
           </aside>
