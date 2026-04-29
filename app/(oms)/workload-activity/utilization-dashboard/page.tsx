@@ -212,8 +212,8 @@ export default function UtilizationDashboardPage() {
       .filter(
         (e) =>
           deptFilter === "All" ||
-          e.department === deptFilter ||
-          departments.find((d) => d.id === e.departmentId)?.name === deptFilter,
+          e.dept === deptFilter ||
+          departments.find((d) => d.id === e.deptId)?.name === deptFilter,
       )
       .map((e) => {
         const myActs = workloadActivities.filter((a) => a.assignedEmployees.includes(e.id));
@@ -503,7 +503,7 @@ export default function UtilizationDashboardPage() {
                               <p className="text-[11px] text-muted-foreground">{e.position}</p>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-xs text-muted-foreground">{e.department}</td>
+                          <td className="px-4 py-3 text-xs text-muted-foreground">{e.dept}</td>
                           <td className="px-4 py-3 text-xs tabular-nums font-medium text-primary">{e.assignedCount}</td>
                           <td className="px-4 py-3 text-xs tabular-nums">{e.totalDemand.toLocaleString()}</td>
                           <td className="w-48 px-4 py-3">

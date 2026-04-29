@@ -160,6 +160,7 @@ export default function PositionDirectoryPage() {
               <tbody>
                 {filtered.map((pos) => {
                   const gap = pos.planned - pos.filled;
+                  const deptMeta = departments.find((d) => d.id === pos.deptId);
                   return (
                     <tr
                       key={pos.id}
@@ -194,7 +195,7 @@ export default function PositionDirectoryPage() {
                       <td className="py-3 px-4 text-xs" style={{ color: "var(--muted-foreground)" }}>
                         ${(pos.salaryMin / 1000).toFixed(0)}K – ${(pos.salaryMax / 1000).toFixed(0)}K
                       </td>
-                      <td className="py-3 px-4 text-xs" style={{ color: "var(--muted-foreground)" }}>{pos.reportingTo}</td>
+                      <td className="py-3 px-4 text-xs" style={{ color: "var(--muted-foreground)" }}>{deptMeta?.head ?? "N/A"}</td>
                       <td className="py-3 px-4">
                         <span
                           className="px-2 py-0.5 rounded-full text-xs font-semibold"

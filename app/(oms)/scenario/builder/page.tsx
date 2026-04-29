@@ -2,9 +2,8 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import {
   Save, Copy, Send, RotateCcw, Plus, Edit2, Trash2, ArrowLeft, ArrowRight,
   ChevronRight, ChevronDown, Building2, Briefcase, Workflow, Activity,
@@ -53,8 +52,11 @@ function fmtCost(n: number) {
 }
 
 export default function ScenarioBuilderPage() {
-  const searchParams = useSearchParams();
-  const scenarioId = searchParams.get("id") || "S001";
+  const [scenarioId, setScenarioId] = useState("S001");
+  useEffect(() => {
+    const nextId = new URLSearchParams(window.location.search).get("id");
+    if (nextId) setScenarioId(nextId);
+  }, []);
   const baseScenario = scenarios.find((s) => s.id === scenarioId) || scenarios[1];
 
   // Scenario meta

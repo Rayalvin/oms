@@ -22,7 +22,7 @@ export default function EditPositionPage({ params }: { params: Promise<{ id: str
     planned: String(position?.planned ?? 1),
     salaryMin: String(position?.salaryMin ?? 60000),
     salaryMax: String(position?.salaryMax ?? 90000),
-    reportingTo: position?.reportingTo ?? "",
+    reportingTo: "",
     status: position?.status ?? "Filled",
   });
   const [competencies, setCompetencies] = useState<string[]>(position?.competencies ?? []);
@@ -192,7 +192,7 @@ export default function EditPositionPage({ params }: { params: Promise<{ id: str
               <div className="flex justify-between"><span style={{ color: "var(--muted-foreground)" }}>Head</span><span style={{ color: "var(--foreground)" }}>{deptObj.head}</span></div>
               <div className="flex justify-between"><span style={{ color: "var(--muted-foreground)" }}>Current HC</span><span style={{ color: "var(--foreground)" }}>{deptObj.hc}</span></div>
               <div className="flex justify-between"><span style={{ color: "var(--muted-foreground)" }}>Vacancies</span><span style={{ color: "var(--destructive)" }}>{deptObj.vacancies}</span></div>
-              <div className="flex justify-between"><span style={{ color: "var(--muted-foreground)" }}>Cost Center</span><span style={{ color: "var(--foreground)" }}>{deptObj.costCenter}</span></div>
+              <div className="flex justify-between"><span style={{ color: "var(--muted-foreground)" }}>Department Code</span><span style={{ color: "var(--foreground)" }}>{deptObj.code}</span></div>
             </div>
           </div>
         )}

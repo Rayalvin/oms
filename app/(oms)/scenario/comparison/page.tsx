@@ -2,9 +2,8 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import {
   ArrowLeft, ArrowRight, ArrowUpDown, Check, Download, GitBranch,
   TrendingUp, TrendingDown, Users, DollarSign, Activity, Target,
@@ -64,14 +63,17 @@ function getScenarioData(scenarioId: string) {
 }
 
 export default function ScenarioComparisonPage() {
-  const searchParams = useSearchParams();
-  const initialA = searchParams.get("a") || "S000";
-  const initialB = searchParams.get("b") || "S001";
-
-  const [aId, setAId] = useState(initialA);
-  const [bId, setBId] = useState(initialB);
+  const [aId, setAId] = useState("S000");
+  const [bId, setBId] = useState("S001");
   const [view, setView] = useState<"overview" | "structure" | "workforce">("overview");
   const [expandedDepts, setExpandedDepts] = useState<Set<string>>(new Set(["D04", "D05"]));
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const nextA = params.get("a");
+    const nextB = params.get("b");
+    if (nextA) setAId(nextA);
+    if (nextB) setBId(nextB);
+  }, []);
 
   const a = useMemo(() => getScenarioData(aId), [aId]);
   const b = useMemo(() => getScenarioData(bId), [bId]);

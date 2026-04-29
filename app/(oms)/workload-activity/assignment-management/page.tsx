@@ -134,8 +134,8 @@ export default function AssignmentManagement() {
       .filter(
         (e) =>
           deptFilter === "All" ||
-          e.department === deptFilter ||
-          departments.find((d) => d.id === e.departmentId)?.name === deptFilter,
+          e.dept === deptFilter ||
+          departments.find((d) => d.id === e.deptId)?.name === deptFilter,
       )
       .map((e) => {
         const myActs = workloadActivities.filter((a) => a.assignedEmployees.includes(e.id));
@@ -160,7 +160,7 @@ export default function AssignmentManagement() {
         (e) =>
           !assignDialog.assignedEmployees.includes(e.id) &&
           (e.position.toLowerCase().includes(assignDialog.role.toLowerCase()) ||
-            e.department.toLowerCase().includes(assignDialog.department.toLowerCase())) &&
+            e.dept.toLowerCase().includes(assignDialog.department.toLowerCase())) &&
           (!q || e.name.toLowerCase().includes(q) || e.position.toLowerCase().includes(q)),
       )
       .slice(0, 12);
@@ -520,7 +520,7 @@ export default function AssignmentManagement() {
                         <div className="min-w-0 flex-1">
                           <p className="text-xs font-semibold">{e.name}</p>
                           <p className="text-[11px] text-muted-foreground">
-                            {e.position} · {e.department}
+                            {e.position} · {e.dept}
                           </p>
                         </div>
                         <div className="text-right">

@@ -491,7 +491,7 @@ function AnalyticsPanel({
   onSelectEmp,
 }: {
   emp: Employee;
-  dept: ReturnType<typeof getDept>;
+  dept: ReturnType<typeof getDept> | null;
   manager: Employee | null | undefined;
   directReports: Employee[];
   onSelectEmp: (id: string) => void;

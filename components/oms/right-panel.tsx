@@ -36,6 +36,11 @@ function StatusBadge({ status }: { status: string }) {
 
 export function RightPanel() {
   const router = useRouter();
+  const normalizedAlerts = criticalAlerts.map((a) => ({
+    ...a,
+    status: a.actionRequired ? "Open" : "Resolved",
+    time: a.timestamp,
+  }));
 
   return (
     <div className="flex flex-col gap-4">
@@ -56,12 +61,12 @@ export function RightPanel() {
                 <p className="text-xs font-semibold text-foreground leading-tight">{rec.title}</p>
                 <span className={cn(
                   "text-xs px-1.5 py-0.5 rounded font-medium flex-shrink-0",
-                  rec.type === "Critical" ? "bg-red-50 text-red-600" :
-                  rec.type === "Risk" ? "bg-amber-50 text-amber-600" :
-                  rec.type === "Optimization" ? "bg-blue-50 text-blue-600" :
+                  rec.category === "Critical" ? "bg-red-50 text-red-600" :
+                  rec.category === "Risk" ? "bg-amber-50 text-amber-600" :
+                  rec.category === "Optimization" ? "bg-blue-50 text-blue-600" :
                   "bg-green-50 text-green-600"
                 )}>
-                  {rec.type}
+                  {rec.category}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed mb-2.5">{rec.description}</p>
@@ -92,11 +97,11 @@ export function RightPanel() {
           <AlertTriangle className="w-4 h-4 text-amber-500" />
           <p className="text-sm font-semibold text-foreground">Active Alerts</p>
           <span className="ml-auto text-xs px-1.5 py-0.5 rounded font-medium bg-red-50 text-red-600">
-            {criticalAlerts.filter((a) => a.status === "Open").length} Open
+            {normalizedAlerts.filter((a) => a.status === "Open").length} Open
           </span>
         </div>
         <div className="divide-y divide-border">
-          {criticalAlerts.slice(0, 5).map((a) => (
+          {normalizedAlerts.slice(0, 5).map((a) => (
             <div key={a.id} className="px-4 py-3 flex items-start gap-3 hover:bg-muted cursor-pointer transition-colors">
               <div className="mt-0.5">
                 {a.severity === "Critical" ? (

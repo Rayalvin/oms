@@ -36,11 +36,17 @@ export default function DashboardPage() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState("All");
   const filters = ["All", "Critical", "High", "Medium", "Low"];
+  const normalizedAlerts = criticalAlerts.map((a) => ({
+    ...a,
+    status: a.actionRequired ? "Open" : "Resolved",
+    dept: a.module,
+    time: a.timestamp,
+  }));
 
   const filteredAlerts =
     activeFilter === "All"
-      ? criticalAlerts
-      : criticalAlerts.filter((a) => a.severity === activeFilter);
+      ? normalizedAlerts
+      : normalizedAlerts.filter((a) => a.severity === activeFilter);
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,7 +126,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-3">
                   <h2 className="text-sm font-semibold text-foreground">Critical Alerts</h2>
                   <span className="text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-600 font-medium">
-                    {criticalAlerts.filter((a) => a.status === "Open").length} Open
+                    {normalizedAlerts.filter((a) => a.status === "Open").length} Open
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">

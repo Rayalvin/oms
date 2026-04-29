@@ -142,10 +142,10 @@ export default function ProcessDetailPage({
   );
   // Deterministic version history derived from process metadata
   const versions = [
-    { version: "v1.0", date: "2024-01-15", author: "System", changes: "Initial process definition" },
-    { version: "v1.1", date: "2024-04-20", author: "Process Owner", changes: "Activity allocations refined" },
-    { version: "v2.0", date: "2024-09-08", author: "BPM Lead", changes: "KPI bindings & I/O mapping added" },
-    { version: "v2.1", date: process.lastUpdated || "2025-02-14", author: "Process Owner", changes: "Latest published baseline" },
+    { version: "v1.0", date: "2024-01-15", author: "System", changes: "Initial process definition", status: "Archived" },
+    { version: "v1.1", date: "2024-04-20", author: "Process Owner", changes: "Activity allocations refined", status: "Archived" },
+    { version: "v2.0", date: "2024-09-08", author: "BPM Lead", changes: "KPI bindings & I/O mapping added", status: "Archived" },
+    { version: "v2.1", date: process.lastUpdated || "2025-02-14", author: "Process Owner", changes: "Latest published baseline", status: "Active" },
   ];
 
   // ----- aggregates -----

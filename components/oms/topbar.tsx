@@ -16,7 +16,10 @@ interface TopBarProps {
 
 export function TopBar({ title = "OM+", subtitle, breadcrumb, actions }: TopBarProps) {
   const [notifOpen, setNotifOpen] = useState(false);
-  const openAlerts = criticalAlerts.filter((a) => a.status === "Open").slice(0, 5);
+  const openAlerts = criticalAlerts
+    .map((a) => ({ ...a, status: a.actionRequired ? "Open" : "Resolved", dept: a.module, time: a.timestamp }))
+    .filter((a) => a.status === "Open")
+    .slice(0, 5);
 
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between px-6 py-3.5 bg-card border-b border-border">

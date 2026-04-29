@@ -341,7 +341,7 @@ export function ActivitiesWorkloadSection(props: Props) {
                 <Pie data={processSplit} dataKey="hours" nameKey="processName" cx="50%" cy="50%" outerRadius={60} innerRadius={30}>
                   {processSplit.map((_, i) => <Cell key={i} fill={PROCESS_COLORS[i % PROCESS_COLORS.length]} />)}
                 </Pie>
-                <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 11 }} formatter={(v: number, _n: string, p: { payload: { processName: string; pct: number } }) => [`${v.toFixed(1)} h (${p.payload.pct}%)`, p.payload.processName]} />
+                <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 11 }} formatter={(v: number, _n, p: any) => [`${v.toFixed(1)} h (${p?.payload?.pct ?? 0}%)`, p?.payload?.processName ?? "Process"]} />
               </PieChart>
             </ResponsiveContainer>
           ) : <div className="h-40 flex items-center justify-center text-xs" style={{ color: "var(--muted-foreground)" }}>—</div>}

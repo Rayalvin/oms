@@ -158,9 +158,10 @@ export default function CostOverviewPage() {
   // Cost per process — use processes' linked dept costs (proxy)
   const costPerProcess = useMemo(() => {
     return processes.map((p) => {
-      const deptEmps = empWithComputed.filter((e) => e.dept === p.dept);
-      const cost = deptEmps.reduce((s, e) => s + e.monthlyCost, 0) / Math.max(1, processes.filter((pp) => pp.dept === p.dept).length);
-      return { id: p.id, name: p.name, dept: p.dept, cost: Math.round(cost), efficiency: p.efficiency };
+      const deptEmps = empWithComputed.filter((e) => e.dept === p.category);
+      const sameCategoryCount = processes.filter((pp) => pp.category === p.category).length;
+      const cost = deptEmps.reduce((s, e) => s + e.monthlyCost, 0) / Math.max(1, sameCategoryCount);
+      return { id: p.id, name: p.name, dept: p.category, cost: Math.round(cost), efficiency: p.efficiency };
     });
   }, [empWithComputed]);
 

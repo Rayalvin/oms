@@ -86,7 +86,7 @@ export default function PositionDetailPage({ params }: { params: Promise<{ id: s
                 <div className="flex items-center gap-3 text-xs" style={{ color: "var(--muted-foreground)" }}>
                   <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{position.dept}</span>
                   <span>·</span>
-                  <span>Reports to: {position.reportingTo}</span>
+                  <span>Department Head: {dept?.head ?? "N/A"}</span>
                   <span>·</span>
                   <span>{position.id}</span>
                 </div>
@@ -295,11 +295,11 @@ export default function PositionDetailPage({ params }: { params: Promise<{ id: s
           <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: "var(--muted-foreground)" }}>Position Info</p>
           {[
             { label: "Department", value: position.dept },
-            { label: "Cost Center", value: dept?.costCenter ?? "—" },
+            { label: "Department Code", value: dept?.code ?? "—" },
             { label: "Location", value: dept?.location ?? "—" },
             { label: "Salary Min", value: `$${(position.salaryMin / 1000).toFixed(0)}K` },
             { label: "Salary Max", value: `$${(position.salaryMax / 1000).toFixed(0)}K` },
-            { label: "Reports To", value: position.reportingTo },
+            { label: "Department Head", value: dept?.head ?? "N/A" },
           ].map((f) => (
             <div key={f.label} className="flex justify-between py-2 border-b text-xs" style={{ borderColor: "var(--border)" }}>
               <span style={{ color: "var(--muted-foreground)" }}>{f.label}</span>
